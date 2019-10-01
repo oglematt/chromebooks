@@ -1,2 +1,2 @@
-<a href="#" onclick="onSignOut()" *ngIf="isSignedIn()">Sign out</a>
-<div class="g-signin2" data-onsuccess="onSignIn(result)"></div>
+<a href="#" (click)="signOut()" *ngIf="isSignedIn()">Sign out</a>
+<div *ngIf="!isSignedIn()" class="g-signin2" data-onsuccess="onSignIn"></div>

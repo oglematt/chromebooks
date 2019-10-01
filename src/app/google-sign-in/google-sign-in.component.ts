@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, NgZone } from '@angular/core';
 
 @Component({
   selector: 'app-google-signin',
@@ -8,14 +8,14 @@ import { Component, ElementRef, OnInit } from '@angular/core';
 
 export class GoogleSigninComponent implements OnInit { 
 
-  constructor () {}
+  constructor(ngZone: NgZone) {
+    window['onSignIn'] = (user) => ngZone.run(() => this.onSignIn(user));
+  }
 
   ngOnInit () {}
 
   onSignIn(googleUser): void {
     
-    console.log('foo');
-
     let profile = googleUser.getBasicProfile();
     
     console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
@@ -34,11 +34,15 @@ export class GoogleSigninComponent implements OnInit {
     }
   }
 
-  onSignOut(): void {
-    let auth2 = gapi.auth2.getAuthInstance();
-    auth2.signOut().then(function () {
-      console.log('User signed out.');
-    });
+  signOut(): void {
+    try {
+      let auth2 = gapi.auth2.getAuthInstance();
+      auth2.signOut().then(function () {
+        console.log('User signed out.');
+      });
+    } catch {
+      console.log('could not sign out');
+    }
   }
 
 }
