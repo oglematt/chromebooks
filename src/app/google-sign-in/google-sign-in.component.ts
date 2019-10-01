@@ -1,48 +1,44 @@
-import { Component, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-google-signin',
-  template: './google-sign-in.component.html',
+  templateUrl: './google-sign-in.component.html',
   styleUrls: ['./google-sign-in.component.css']
 })
 
-export class GoogleSigninComponent implements AfterViewInit {
+export class GoogleSigninComponent implements OnInit { 
 
-  public gapi: any;
+  constructor () {}
 
-ngAfterViewInit() {
+  ngOnInit () {}
 
-   gapi.signin2.render('google-sign-in', {
-      'scope': 'profile email',
-      'width': 240,
-      'height': 50,
-      'longtitle': true,
-      'theme': 'light',
-      'onsuccess': param => this.onSignIn(param)
-  });
+  onSignIn(googleUser): void {
+    
+    console.log('foo');
 
-}
+    let profile = googleUser.getBasicProfile();
+    
+    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+    console.log('Name: ' + profile.getName());
+    console.log('Image URL: ' + profile.getImageUrl());
+    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+  
+  }
 
-public onSignIn(googleUser) {
+  isSignedIn(): boolean {
+    try {
+      let auth2 = gapi.auth2.getAuthInstance();   
+      return (auth2.isSignedIn.get());
+    } catch {
+      return false;
+    }
+  }
 
-   var user : any;
-
-      ((u, p) => {
-         u.id            = p.getId();
-         u.name          = p.getName();
-         u.email         = p.getEmail();
-         u.imageUrl      = p.getImageUrl();
-         u.givenName     = p.getGivenName();
-         u.familyName    = p.getFamilyName();
-      })(user, googleUser.getBasicProfile());
-
-      ((u, r) => {
-         u.token         = r.id_token;
-      })(user, googleUser.getAuthResponse());
-
-      user.save();
-
-      console.log(user);
-};
+  onSignOut(): void {
+    let auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+      console.log('User signed out.');
+    });
+  }
 
 }

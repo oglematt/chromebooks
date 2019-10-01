@@ -1,3 +1,2 @@
-<button mat-raised-button color="primary" (click)="signIn()" id="google-sign-in">
-  Sign In with Google
-</button>
+<a href="#" onclick="onSignOut()" *ngIf="isSignedIn()">Sign out</a>
+<div class="g-signin2" data-onsuccess="onSignIn(result)"></div>
